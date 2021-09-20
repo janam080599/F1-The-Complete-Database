@@ -1,0 +1,167 @@
+set search_path to a;
+
+
+1:To know the points and name of drivers by entering position of a particular race in world championship calender in a season.
+
+CREATE FUNCTION spPointsForAnyPosition(pos integer) 
+RETURNS Table (
+	drivernumber Integer,
+	employeeid Varchar(6),
+	score Integer,
+	drivername Varchar(21)
+	
+)  AS $BODY$ 
+
+BEGIN 
+	 
+	 
+	 	RETURN QUERY
+	 	select  Driver_Number, Employee_ID, Points,Name from Driver natural join Employee  
+		where Position = pos
+		order by Points DESC;
+	
+END
+$BODY$ LANGUAGE plpgsql;
+
+2:To know the details of a racetrack by entering position of a particular race in world championship calender in a season.
+
+CREATE FUNCTION spRaceTrackFinder(pos integer) 
+RETURNS TABLE (
+	nationname         VARCHAR(24) 
+  ,noofturns          INTEGER   
+  ,rtname        VARCHAR(42)  
+  ,len         VARCHAR(5)  
+  ,capacity INTEGER   
+  ,city   VARCHAR(11)  
+  ,pos_d     INTEGER      
+  ,dorn   VARCHAR(13)  
+	
+)  AS $BODY$ 
+
+BEGIN 
+	 
+	 
+	 	RETURN QUERY
+	 	select  Nation, Turns,RC_Name,Length,Crowd_Capacity,Nearest_City,Position_D,Day_or_Night FROM RaceTrack  
+		where Position_D = pos;
+	
+END
+$BODY$ LANGUAGE plpgsql;
+
+3:To know the success rate of a particular race in a season by entering position of that race in world championship calender. 
+
+CREATE FUNCTION spSuccessRate(pos integer) 
+RETURNS Integer
+AS $BODY$ 
+DECLARE
+	e Driver;	
+	sum Integer;
+	percent INTEGER;
+BEGIN 
+	 	sum=0;
+		FOR e IN SELECT * FROM Driver AS d join RaceTrack AS r
+		ON d.Position=r.Position_D
+		WHERE Position_D=pos
+		
+LOOP
+	 IF (e.Points>=0) THEN
+			sum :=sum+e.Points;
+	END IF;
+END LOOP;
+	percent= (sum*100)/101;
+RETURN percent;
+	
+END
+$BODY$ LANGUAGE plpgsql;
+
+4:To get highest point scoring team.
+
+create or replace function spGetHighestPointScoringTeam()
+returns integer as $BODY$
+DECLARE
+	
+	s record;
+	t Team%ROWTYPE;
+	
+BEGIN
+	
+	for s in select T_name,Points
+	from Team 
+	group by T_Name 
+	order by Points
+	desc limit 1
+	LOOP
+		select T_Name,Nationality,Budget,Debut_Year,Driver_1_ID,Driver_2_ID,Engine_Supplier,Team_Base,Points into t from Team where Team.T_Name=s.T_Name;
+		RAISE NOTICE 'Team Name:%',t.T_Name;
+		RAISE NOTICE 'Team Nationality:%',t.Nationality;
+		RAISE NOTICE 'Team  Driver_1_ID:%',t.Driver_1_ID;
+		RAISE NOTICE 'Team  Driver_2_ID:%',t.Driver_2_ID;
+		RAISE NOTICE 'Team Base:%',t.Team_Base;
+		
+	END Loop;
+	return 1;
+	END
+$BODY$
+language 'plpgsql'
+
+5:To get employee name, date of birth, team name, and team base by entering that employee's employee id.
+
+CREATE OR REPLACE FUNCTION spGetEmployeeTeamDetails(empid varchar) RETURNS void AS $BODY$
+DECLARE 
+r record;
+BEGIN
+ SELECT Name,Date_of_Birth,Team_Name,Team_Base into r FROM Employee AS e join Team AS t ON e.Team_Name=t.T_Name
+ where empid=e.Employee_ID;
+
+RAISE NOTICE 'Employee Name:%',r.Name;
+RAISE NOTICE 'Date of Birth :%',r.Date_of_Birth;
+RAISE NOTICE 'Team Name :%',r.Team_Name;
+RAISE NOTICE 'Team Base :%',r.Team_Base;
+
+
+
+
+END $BODY$ LANGUAGE 'plpgsql';
+
+6:To change team name who set a particular record from record table.
+
+CREATE OR REPLACE FUNCTION newdue(tname Char,rid INTEGER)
+RETURNS void  
+AS $BODY$
+BEGIN
+      UPDATE Achieves_2
+	SET T_Name=tname
+    WHERE Record_ID =rid;
+  
+END $BODY$ LANGUAGE 'plpgsql';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

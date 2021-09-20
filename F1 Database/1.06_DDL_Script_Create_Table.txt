@@ -1,0 +1,299 @@
+set search_path to a;
+
+
+CREATE TABLE Team(
+   T_Name          VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Nationality     VARCHAR(40) NOT NULL
+  ,Budget          VARCHAR(40) NOT NULL
+  ,Debut_Year      INTEGER  NOT NULL
+  ,Driver_1_ID     INTEGER  NOT NULL
+  ,Driver_2_ID     INTEGER  NOT NULL
+  ,Engine_Supplier VARCHAR(40) NOT NULL
+  ,Team_Base       VARCHAR(40) NOT NULL
+  ,Points          INTEGER  NOT NULL
+  ,G_Year          INTEGER  NOT NULL
+  ,W_Year          INTEGER  NOT NULL
+);
+
+CREATE TABLE Driver(
+   Driver_Number INTEGER  NOT NULL
+  ,Team_Name     VARCHAR(40) NOT NULL
+  ,Nationality   VARCHAR(40) NOT NULL
+  ,Debut         INTEGER  NOT NULL
+  ,W_Year        INTEGER  NOT NULL
+  ,Employee_ID   VARCHAR(40)(40)(4) NOT NULL
+  ,Points        INTEGER  NOT NULL
+  ,G_Year        INTEGER  NOT NULL
+  ,Position      INTEGER  NOT NULL
+  ,PRIMARY KEY(Employee_ID,Position)
+);
+
+CREATE TABLE Employee(
+   Employee_ID   VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Name          VARCHAR(40) NOT NULL
+  ,Date_of_Birth DATE  NOT NULL
+  ,Team_Name     VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE RaceTrack(
+   Nation         VARCHAR(40) NOT NULL
+  ,Turns          INTEGER  NOT NULL
+  ,RC_Name        VARCHAR(40) NOT NULL
+  ,Length         VARCHAR(40) NOT NULL
+  ,Crowd_Capacity INTEGER  NOT NULL
+  ,Nearest_City   VARCHAR(40) NOT NULL
+  ,Position_D     INTEGER  NOT NULL PRIMARY KEY 
+  ,Day_or_Night   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Tyres(
+   Tyre_Name              VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Speed_Delta            NUMERIC(3,1) NOT NULL
+  ,Manufacturer           VARCHAR(40) NOT NULL
+  ,Longetivity            VARCHAR(40) NOT NULL
+  ,Optimum_TemperatureC   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Weather(
+   RaceTrack_Name VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Position       INTEGER  NOT NULL
+  ,Type           VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Sponsor(
+   S_Name            VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Devoted_Money     VARCHAR(40) NOT NULL
+  ,Devoted_Employees INTEGER  NOT NULL
+);
+
+CREATE TABLE Records(
+   Record_ID INTEGER  NOT NULL PRIMARY KEY 
+  ,Type      VARCHAR(40) NOT NULL
+  ,Value     INTEGER  NOT NULL
+);
+
+CREATE TABLE Strategy(
+   St_Name        VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Average_Laps   INTEGER  NOT NULL
+  ,RaceTrack_Name VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Pit_Crew_Member(
+   Employee_ID              VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Team_Name                VARCHAR(40) NOT NULL
+  ,Fastest_Pit_Stop_Times   NUMERIC(3,1) NOT NULL
+);
+
+CREATE TABLE Team_Principle(
+   Employee_ID VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Team_Name   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Technician(
+   Employee_ID VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Team_Name   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Analyst(
+   Employee_ID VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Team_Name   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Strategist(
+   Employee_ID VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Team_Name   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Dependents(
+   Name          VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Employee_ID   VARCHAR(40) NOT NULL
+  ,Sex           VARCHAR(40) NOT NULL
+  ,Date_of_Birth DATE  NOT NULL
+  ,RelationShip  VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Engine(
+   Engine_Number VARCHAR(40) NOT NULL PRIMARY KEY
+  ,Capacity      NUMERIC(3,1) NOT NULL
+  ,HorsePower    INTEGER  NOT NULL
+);
+
+CREATE TABLE World_Championship_Points(
+   W_Year INTEGER  NOT NULL PRIMARY KEY 
+);
+
+CREATE TABLE Grand_Prix_Points(
+   G_Year                    INTEGER  NOT NULL PRIMARY KEY 
+  ,Maximum_Grand_Prix_Points INTEGER  NOT NULL
+);
+
+CREATE TABLE Financies_1(
+   S_Name     VARCHAR(40) NOT NULL
+  ,Position_D INTEGER  NOT NULL
+  ,PRIMARY KEY(S_Name,Position_D)
+);
+
+CREATE TABLE Financies_2(
+   S_Name VARCHAR(40) NOT NULL 
+  ,T_Name VARCHAR(40) NOT NULL
+,	PRIMARY KEY (S_Name, T_Name)
+);
+
+CREATE TABLE Achieves_1(
+   Record_ID   INTEGER  NOT NULL
+  ,Employee_Id VARCHAR(40) NOT NULL
+  ,Position    INTEGER  NOT NULL
+  ,PRIMARY KEY(Record_ID,Employee_Id,Position)
+);
+
+CREATE TABLE Achieves_2(
+   Record_ID INTEGER  NOT NULL  
+  ,T_Name    VARCHAR(40) NOT NULL 
+  ,	PRIMARY KEY (Record_ID, T_Name)
+);
+
+CREATE TABLE Influences(
+   St_Name   VARCHAR(40) NOT NULL 
+  ,Tyre_Name VARCHAR(40) NOT NULL  
+	,	PRIMARY KEY (St_Name, Tyre_Name)
+);
+
+CREATE TABLE Formulates(
+   Employee_ID VARCHAR(40) NOT NULL  
+  ,St_Name     VARCHAR(40) NOT NULL  
+	,	PRIMARY KEY (St_Name, Employee_ID)
+);
+
+CREATE TABLE Supplies(
+   T_Name        VARCHAR(40) NOT NULL
+  ,Engine_Number VARCHAR(40) NOT NULL
+  ,PRIMARY KEY(T_Name,Engine_Number)
+);
+
+CREATE TABLE Manages(
+   Employee_ID   VARCHAR(40) NOT NULL  
+  ,Engine_Number VARCHAR(40) NOT NULL  
+	,	PRIMARY KEY (Engine_Number, Employee_ID)
+);
+
+CREATE TABLE Contributes_to(
+   W_Year         INTEGER  NOT NULL
+  ,G_Year         INTEGER  NOT NULL
+  ,Maximum_Points INTEGER  NOT NULL
+  ,PRIMARY KEY(W_Year,G_Year)
+);
+
+CREATE TABLE Drives_In(
+   Position    INTEGER  NOT NULL
+  ,Employee_ID VARCHAR(40) NOT NULL
+  ,Position_D  INTEGER  NOT NULL
+  ,PRIMARY KEY(Position,Employee_ID,Position_D)
+);
+
+set search_path to F;
+
+ALTER TABLE Team
+ADD FOREIGN KEY (W_Year,G_Year) REFERENCES Contributes_to(W_Year,G_Year) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Contributes_to
+ADD FOREIGN KEY (W_Year) REFERENCES World_Championship_Points(W_Year) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Contributes_to
+ADD FOREIGN KEY (G_Year) REFERENCES Grand_Prix_Points(G_Year) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Driver
+ADD FOREIGN KEY (W_Year,G_Year) REFERENCES Contributes_to(W_Year,G_Year) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Employee
+ADD FOREIGN KEY (Team_Name) REFERENCES Team(T_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Weather
+ADD FOREIGN KEY (Position) REFERENCES RaceTrack(Position_D) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Drives_In
+ADD FOREIGN KEY (Position_D) REFERENCES RaceTrack(Position_D) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Employee_ID,Position) REFERENCES Driver(Employee_ID,Position) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Financies_1
+ADD FOREIGN KEY (Position_D) REFERENCES RaceTrack(Position_D) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (S_Name) REFERENCES Sponsor(S_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Achieves_1
+ADD FOREIGN KEY (Record_ID) REFERENCES Records(Record_ID) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Employee_Id,Position) REFERENCES Driver(Employee_ID,Position) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Strategy
+ADD FOREIGN KEY (RaceTrack_Name) REFERENCES Weather(RaceTrack_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Influences
+ADD FOREIGN KEY (St_Name) REFERENCES Strategy(St_Name) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Tyre_Name) REFERENCES Tyres(Tyre_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Pit_Crew_Member
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Team_Principle
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Analyst
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Financies_2
+ADD FOREIGN KEY (S_Name) REFERENCES Sponsor(S_Name) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (T_Name) REFERENCES Team(T_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Achieves_2
+ADD FOREIGN KEY (Record_ID) REFERENCES Records(Record_ID) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (T_Name) REFERENCES Team(T_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Technician
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Manages
+ADD FOREIGN KEY (Employee_ID) REFERENCES Technician(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Engine_Number) REFERENCES Engine(Engine_Number) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Supplies
+ADD FOREIGN KEY (T_Name) REFERENCES Team(T_Name) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (Engine_Number) REFERENCES Engine(Engine_Number) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Strategist
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Formulates
+ADD FOREIGN KEY (Employee_ID) REFERENCES Strategist(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE,
+ADD FOREIGN KEY (St_Name) REFERENCES Strategy(St_Name) ON DELETE CASCADE ON UPdate CASCADE;
+
+ALTER TABLE Dependents
+ADD FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID) ON DELETE CASCADE ON UPdate CASCADE;
+
+CREATE TABLE Tyres_update(
+   Tyre_Name              VARCHAR(40) NOT NULL
+  ,Speed_Delta            NUMERIC(3,1) NOT NULL
+  ,Old_Manufacturer           VARCHAR(40) NOT NULL
+  ,New_Manufacturer           VARCHAR(40) NOT NULL
+  ,Longetivity            VARCHAR(40) NOT NULL
+  ,Optimum_TemperatureC   VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Sponsor_inserts(
+   S_Name            VARCHAR(40) NOT NULL
+  ,Devoted_Money     VARCHAR(40) NOT NULL
+	,Devoted_Employees     VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE Engine_update(
+   Engine_Number VARCHAR(40) NOT NULL
+  ,Capacity      NUMERIC(3,1) NOT NULL
+  ,Old_HorsePower    INTEGER  NOT NULL
+	  ,New_HorsePower    INTEGER  NOT NULL
+
+);
+
+
+
+
+
+
+

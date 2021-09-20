@@ -1,0 +1,96 @@
+set searc_path to a;
+
+1:What are the points scored by individual drivers in a particular race('X'). Here 'X' is the position of the race in World Championship season and it varies from 1 to 21.
+
+select Name, Driver_Number, Employee_ID,Points from Driver natural join Employee 
+where Position = 12
+order by Points DESC;
+
+2:Complete Racetrack details regarding 13th race of the World Championship season.
+
+SELECT * FROM RaceTrack 
+WHERE Position_D=13;
+
+3:Success percentage of all the teams during the entire season.
+
+SELECT (Points*100)/903 FROM Team;
+
+4:Individual success rates of all the drivers in the 21st race of World Championship season.
+
+SELECT Driver_Number,(Points*100)/25 AS percent FROM Driver AS d join RaceTrack AS r
+ON d.Position=r.Position_D
+WHERE Position_D=21
+ORDER BY percent DESC;
+
+5:Complete details of the Racetrack hosting Australian Formula 1 Grand Prix along the Weather during the Grand Prix.
+
+SELECT Nation,Type,Turns,RC_Name,Length,Crowd_Capacity,Nearest_City,Position_D,Day_or_Night 
+From RaceTrack AS r join Weather AS w
+ON r.Position_D=w.Position
+WHERE Nation='Australia';
+
+6:Complete list of home Grand Prix's of each individual driver in the grid.
+
+SELECT Driver_Number,Name,RC_Name,Nation FROM (Driver AS d join RaceTrack AS r
+ON d.Position=r.Position_D ) AS dr join Employee as e
+ON dr.Employee_ID=e.Employee_ID
+WHERE Nationality= Nation;
+
+7:Details of all the Pit Crew members who have recorded fastest pitstop time below 2 seconds.
+
+SELECT Name,Employee_ID, Team_Name FROM Employee natural join Pit_Crew_Member
+WHERE Fastest_Pit_Stop_Times<2.0;
+
+8:Teams in the Formula 1 grid that are using FERRARI  Engine.
+
+SELECT T_Name FROM Engine natural join Supplies natural join Team
+WHERE Engine_Number='F1';
+
+9:Complete details of the Racetracks which can accommodate more than 50000 crowds  and consist of less than 18 turns and also have sunny weather during the Grand Prix.
+
+SELECT St_Name, Nation FROM (RaceTrack AS r join Weather AS w ON r.RC_Name=w.RaceTrack_Name) natural join Strategy
+WHERE Crowd_Capacity>50000 and Turns<18 and Type='Sunny';
+
+10:Complete list of Sponsors all of whom are devoting less than '$70 million' along with their respective Teams and Racetracks which they are sponsoring in Formula 1.
+
+SELECT S_Name,Devoted_Money,Devoted_Employees,Nation,T_Name 
+FROM (Sponsor natural join Financies_1 natural join RaceTrack natural join  Financies_2 natural join Team) 
+WHERE Devoted_Money<'$70m'
+ORDER BY T_Name;
+
+11:Name and nationality of the record holder drivers.
+
+SELECT Record_ID,Type ,Value,Name, Nationality 
+FROM (Achieves_1 natural join Driver natural join Records) natural join Employee 
+WHERE Type='Poles';
+
+12:Number of Employees who have registered dependents as "son".
+
+SELECT count(Employee_ID) 
+FROM Dependents  
+Where RelationShip='Son';
+
+13:Complete details of tyres which are used in two stop strategy.
+
+SELECT Tyre_Name,Speed_Delta,Manufacturer,Longetivity,Optimum_Temperaturec,St_Name
+FROM Tyres natural join Influences natural join Strategy
+WHERE St_Name='Two Stop';
+
+14:What are the Maximum,  Minimum recorded fastest pitstop times along with the average fastest pitstop time.
+
+SELECT max(Fastest_Pit_Stop_Times),min(Fastest_Pit_Stop_Times),avg(Fastest_Pit_Stop_Times)
+FROM Pit_Crew_Member;
+
+15:Number of teams that have similar fastest pitstop times.
+
+SELECT Fastest_Pit_Stop_Times,count(Distinct Team_Name)
+FROM Pit_Crew_Member
+GROUP BY Fastest_Pit_Stop_Times;
+
+16:Total number of points accumulated by each individual driver from the first 10 World Championship Races.
+
+SELECT Driver_Number,Team_Name,Name,sum(Points)
+FROM Driver natural join Employee
+WHERE Position<11
+GROUP BY Driver_Number,Team_Name,Name
+ORDER BY sum DESC;

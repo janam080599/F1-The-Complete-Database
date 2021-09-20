@@ -1,0 +1,355 @@
+/*
+GROUP - 1.06
+Janam Vaidya - 201701027
+Rishabh K. Pandat - 201701048
+Milan Nagariya - 201701010
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <libpq-fe.h>
+#include <string.h>
+#include <unistd.h>
+#include<stdbool.h>
+#include"sqlda.h"
+int x;
+char q[128],temp;
+PGresult *res;
+PGconn *conn;
+
+void insert_choice() {
+int choice;
+char query[250],buf[20],c;
+printf("WHERE DO YOU WANT TO INSERT?\n1. Team\n2. Driver\n3. RaceTrack\n4. Employee\n5. Sponsor");
+printf("Choose the entity: ");
+scanf("%d",&choice);
+c=getchar();
+switch(choice){
+case 1:{
+char T_Name[40],Nationality[40],Budget[40],Engine_Supplier[40],Team_Base[40];
+long long int Debut_Year,Driver_1_ID,Driver_2_ID,Points,G_Year,W_Year;
+printf("Team Name : ");
+scanf ("%[^\n]%*c", T_Name);
+printf("Nationality: ");
+scanf ("%[^\n]%*c",Nationality);
+printf("Budget: ");
+scanf("%[^\n]%*c",Budget);
+printf("Debut Year: ");
+scanf("%lld",&Debut_Year);
+printf("Driver 1 ID: ");
+scanf("%lld",&Driver_1_ID);
+printf("Driver 2 ID: ");
+scanf("%lld",&Driver_2_ID);
+printf("Engine Supplier: ");
+scanf(" %[^\n]%*c",Engine_Supplier);
+printf("Team Base: ");
+scanf(" %[^\n]%*c",Team_Base);
+printf("Points: ");
+scanf("%lld",&Points);
+printf("Grand Prix Year: ");
+scanf("%lld",&G_Year);
+printf("World Championship Year: ");
+scanf("%lld",&W_Year);
+
+strcpy(query,"insert into Team values  ('");
+strcat(query, T_Name);
+strcat(query,"','");
+strcat(query, Nationality);
+strcat(query,"','");
+strcat(query, Budget);
+strcat(query,"','");
+sprintf(buf,"%d",Debut_Year);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",Driver_1_ID);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",Driver_2_ID);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query, Engine_Supplier);
+strcat(query,"','");
+strcat(query, Team_Base);
+strcat(query,"','");
+sprintf(buf,"%d",Points);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",G_Year);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",W_Year);
+strcat(query, buf);
+strcat(query,"');");
+printf("%s\n",query);
+res = PQexec(conn, query);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("AUTO-GENERATED INSERT STATEMENT ran Successfully!\n");
+}
+    PQclear(res);
+break;
+}
+case 2:{
+char Team_Name[40],Nationality[40],Employee_ID[40];
+long long int Driver_Number,Debut,W_Year,G_Year,Position,Points;
+printf("Driver Number : ");
+scanf ("%lld", &Driver_Number);
+printf("Team Name: ");
+scanf (" %[^\n]%*c",Team_Name);
+printf("Nationality: ");
+scanf(" %[^\n]%*c",Nationality);
+printf("Debut Year: ");
+scanf("%lld",&Debut);
+printf("World Championship Year: ");
+scanf("%lld",&W_Year);
+printf("Employee ID: ");
+scanf(" %[^\n]%*c",Employee_ID);
+printf("Points: ");
+scanf("%lld",&Points);
+printf("Grand Prix Year: ");
+scanf("%lld",&G_Year);
+printf("Position: ");
+scanf("%lld",&Position);
+
+strcpy(query,"insert into Driver values  ('");
+sprintf(buf,"%d",Driver_Number);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query, Team_Name);
+strcat(query,"','");
+strcat(query, Nationality);
+strcat(query,"','");
+sprintf(buf,"%d",Debut);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",W_Year);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query, Employee_ID);
+strcat(query,"','");
+sprintf(buf,"%d",Points);
+strcat(query, buf);
+strcat(query,"','");
+sprintf(buf,"%d",G_Year);
+strcat(query,buf);
+strcat(query,"','");
+sprintf(buf,"%d",Position);
+strcat(query,buf);
+strcat(query,"');");
+printf("%s\n",query);
+res = PQexec(conn, query);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("AUTO-GENERATED INSERT STATEMENT ran Successfully!\n");
+}
+    PQclear(res);
+break;
+}
+case 3:{
+char Nation[40],RC_Name[42],Length[40],Nearest_City[40],Day_or_Night[40];
+long long int Turns,Crowd_Capacity,Position_D;
+printf("Nation : ");
+scanf ("%[^\n]%*c", Nation);
+printf("Turns: ");
+scanf ("%lld",&Turns);
+printf("Race Track Name: ");
+scanf(" %[^\n]%*c",RC_Name);
+printf("Race Track Length: ");
+scanf (" %[^\n]%*c", Length);
+printf("Crowd Capacity: ");
+scanf("%lld",&Crowd_Capacity);
+printf("Nearest City: ");
+scanf(" %[^\n]%*c",Nearest_City);
+printf("Position in Championship Calender: ");
+scanf("%lld",&Position_D);
+printf("Day OR Night: ");
+scanf(" %[^\n]%*c",Day_or_Night);
+
+strcpy(query,"insert into RaceTrack values  ('");
+strcat(query, Nation);
+strcat(query,"','");
+sprintf(buf,"%d",Turns);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query, RC_Name);
+strcat(query,"','");
+strcat(query, Length);
+strcat(query,"','");
+sprintf(buf,"%d",Crowd_Capacity);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query, Nearest_City);
+strcat(query,"','");
+sprintf(buf,"%d",Position_D);
+strcat(query, buf);
+strcat(query,"','");
+strcat(query,Day_or_Night);
+strcat(query,"');");
+printf("%s\n",query);
+res = PQexec(conn, query);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("AUTO-GENERATED INSERT STATEMENT ran Successfully!\n");
+}
+    PQclear(res);
+break;
+}
+case 4:{
+char Employee_ID[40],Name[40],Date_of_Birth[40],Team_Name[40];
+printf("Employee ID : ");
+scanf ("%[^\n]%*c", Employee_ID);
+printf("Name: ");
+scanf ("%[^\n]%*c",Name);
+printf("Date of Birth: ");
+scanf("%[^\n]%*c",Date_of_Birth);
+printf("Team Name: ");
+scanf("%[^\n]%*c",Team_Name);
+
+strcpy(query,"insert into Employee values  ('");
+strcat(query, Employee_ID);
+strcat(query,"','");
+strcat(query, Name);
+strcat(query,"','");
+strcat(query, Date_of_Birth);
+strcat(query,"','");
+strcat(query,Team_Name);
+strcat(query,"');");
+printf("%s\n",query);
+res = PQexec(conn, query);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("AUTO-GENERATED INSERT STATEMENT ran Successfully!\n");
+}
+    PQclear(res);
+break;
+}
+       case 5:{
+char S_Name[40],Devoted_Money[40];
+long long int Devoted_Employees;
+printf("Sponsor Name : ");
+scanf ("%[^\n]%*c", S_Name);
+printf("Devoted Money: ");
+scanf ("%[^\n]%*c",Devoted_Money);
+printf("Devoted Employees: ");
+scanf("%lld",&Devoted_Employees);
+
+strcpy(query,"insert into Sponsor values  ('");
+strcat(query, S_Name);
+strcat(query,"','");
+strcat(query, Devoted_Money);
+strcat(query,"','");
+sprintf(buf,"%d",Devoted_Employees);
+strcat(query,buf);
+strcat(query,"');");
+printf("%s\n",query);
+res = PQexec(conn, query);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("AUTO-GENERATED INSERT STATEMENT ran Successfully!\n");
+}
+    PQclear(res);
+break;
+}
+default:{
+printf("Please Choose From Choices Given Above:\n");
+}
+}
+}
+void delete_choice(){
+printf("Write Delete Statement: ");
+scanf("%c",&temp);
+        scanf("%[^\n]s",q);
+    res = PQexec(conn, q);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("Delete Statement ran Successfully!\n");
+}
+    PQclear(res);
+}
+void update_choice(){
+printf("Write Update Statement: ");
+scanf("%c",&temp);
+        scanf("%[^\n]s",q);
+    res = PQexec(conn, q);
+    if(PQresultStatus(res) != PGRES_COMMAND_OK) {
+printf("\nError: %s\n",PQerrorMessage(conn));
+    }
+else {
+printf("Update Statement ran Successfully!\n");
+}
+    PQclear(res);
+}
+void select_query() {
+printf("Enter Select Query: ");
+scanf("%c",&temp);
+scanf("%[^\n]s",q);
+    res = PQexec(conn, q);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        printf("No data retrieved\n");
+        PQclear(res);
+    }
+    else {
+    int rows = PQntuples(res);
+int cols = PQnfields(res);
+    printf("\n");
+    for(int i=0; i<rows; i++) {
+    for (int j=0;j<cols;j++) {
+printf("%s\t",PQgetvalue(res, i, j));
+    }
+printf("\n");
+}
+}
+    PQclear(res);
+}
+int main() {
+    conn = PQconnectdb("host=10.100.71.21 user=201701010 password=mj2708 dbname=201701010");
+if (PQstatus(conn) == CONNECTION_BAD) {
+        fprintf(stderr, "Connection to database failed: %s\n",
+            PQerrorMessage(conn));
+exit(1);
+    }
+printf("CONNECTED TO DATABASE!\n");
+PQexec(conn, "set search_path to a;");
+printf("SEARCH_PATH SET!\n");
+printf("\nChoose Option: \n");
+printf("1. Insert\n");
+printf("2. Update\n");
+printf("3. Delete\n");
+printf("4. Query\n");
+printf("0. Exit\n\n");
+printf("Enter Option: ");
+fflush(stdin);
+
+scanf("%d",&x);
+while(x){
+if (x==1) insert_choice();
+else if (x==2) update_choice();
+else if (x==3) delete_choice();
+else if(x==4) select_query();
+
+printf("\n\nChoose Option: \n");
+printf("1. Insert\n");
+printf("2. Update\n");
+printf("3. Delete\n");
+printf("4. Query\n");
+printf("0. Exit\n\n");
+printf("Enter Option: ");
+fflush(stdin);
+
+scanf("%d",&x);
+}
+    PQfinish(conn);
+return 0;
+}

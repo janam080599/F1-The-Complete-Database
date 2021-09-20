@@ -1,0 +1,85 @@
+set search_path to a;
+
+1:
+
+create or replace function tyre_Changer()
+returns trigger as $BODY$
+begin 
+if new.Manufacturer<>old.Manufacturer then 
+insert into Tyres_update values(old.Tyre_Name,old.Speed_Delta,old.Manufacturer,new.Manufacturer,old.Longetivity,old.Optimum_Temperaturec);
+end if;
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger tyre_Change
+after update on Tyres
+for each row 
+execute procedure tyre_Changer();
+
+CREATE TABLE Tyres_update(
+   Tyre_Name              VARCHAR(18) NOT NULL
+  ,Speed_Delta            NUMERIC(3,1) NOT NULL
+  ,Old_Manufacturer           VARCHAR(7) NOT NULL
+  ,New_Manufacturer           VARCHAR(20) NOT NULL
+  ,Longetivity            VARCHAR(7) NOT NULL
+  ,Optimum_TemperatureC   VARCHAR(7) NOT NULL
+);
+update Tyres set Manufacturer='Bridge' WHERE Tyre_Name='Wet Blue';
+
+select * from Tyres;
+select * from Tyres_update;
+
+2:
+
+create or replace function sponsor_inserter()
+returns trigger as $BODY$
+begin  
+insert into Sponsor_inserts(S_Name,Devoted_Money,Devoted_Employees) values(new.S_Name,new.Devoted_Money,new.Devoted_Employees);
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger sponsor_insert
+after insert on Sponsor
+for each row 
+execute procedure sponsor_inserter();
+
+CREATE TABLE Sponsor_inserts(
+   S_Name            VARCHAR(10) NOT NULL
+  ,Devoted_Money     VARCHAR(4) NOT NULL
+	,Devoted_Employees     VARCHAR(4) NOT NULL
+);
+Insert into Sponsor(S_Name,Devoted_Money,Devoted_Employees) values('Monster','$45m',350);
+
+select * from Sponsor;
+select * from Sponsor_inserts;
+
+3:
+
+create or replace function engine_changer()
+returns trigger as $BODY$
+begin 
+if new.HorsePower<>old.HorsePower then 
+insert into Engine_update values(old.Engine_Number,old.Capacity,old.HorsePower,new.HorsePower);
+end if;
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger engine_change
+before update on Engine
+for each row 
+execute procedure engine_changer();
+
+CREATE TABLE Engine_update(
+   Engine_Number VARCHAR(2) NOT NULL
+  ,Capacity      NUMERIC(3,1) NOT NULL
+  ,Old_HorsePower    INTEGER  NOT NULL
+	  ,New_HorsePower    INTEGER  NOT NULL
+
+);
+update Engine set HorsePower=1000 WHERE Engine_Number='R1';
+
+select * from Engine;
+select * from Engine_update;

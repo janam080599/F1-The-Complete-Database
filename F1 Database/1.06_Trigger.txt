@@ -1,0 +1,53 @@
+set search_path to a;
+
+1:When manufacturers of tyres are updated.
+
+create or replace function tyre_Changer()
+returns trigger as $BODY$
+begin 
+if new.Manufacturer<>old.Manufacturer then 
+insert into Tyres_update values(old.Tyre_Name,old.Speed_Delta,old.Manufacturer,new.Manufacturer,old.Longetivity,old.Optimum_Temperaturec);
+end if;
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger tyre_Change
+after update on Tyres
+for each row 
+execute procedure tyre_Changer();
+
+
+2:When new sponsors are inserted.
+
+create or replace function sponsor_inserter()
+returns trigger as $BODY$
+begin  
+insert into Sponsor_inserts(S_Name,Devoted_Money,Devoted_Employees) values(new.S_Name,new.Devoted_Money,new.Devoted_Employees);
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger sponsor_insert
+after insert on Sponsor
+for each row 
+execute procedure sponsor_inserter();
+
+
+3:When horsepower is of engine are updated.
+
+create or replace function engine_changer()
+returns trigger as $BODY$
+begin 
+if new.HorsePower<>old.HorsePower then 
+insert into Engine_update values(old.Engine_Number,old.Capacity,old.HorsePower,new.HorsePower);
+end if;
+return new;
+end $BODY$
+language 'plpgsql';
+
+create  trigger engine_change
+before update on Engine
+for each row 
+execute procedure engine_changer();
+
